@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=1">
+    <title>Currency Converter</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <style>
+        *, *:after, *:before {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            margin: 0;
+            background: linear-gradient(to right bottom, #007673, #0e0066);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 600px;
+        }
+        h1 {
+            font-size: 60px;
+            text-align: center;
+        }
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .col {
+            width: 48%;
+        }
+        select,
+        input {
+            width: 100%;
+            margin-bottom: 15px;
+            font-size: 20px;
+            padding: 8px 15px;
+            font-weight: 700;
+        }
+        button {
+            width: 200px;
+            display: block;
+            padding: 10px;
+            text-align: center;
+            margin: 0 auto;
+            font-size: 22px;
+            border-radius: 15px;
+            background-color: #e62e00;
+            color: #fff;
+            border: 0;
+            cursor: pointer;
+        }
+        input:disabled {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Currency Converter</h1>
+    <div class="row">
+      <div class="col">
+        <select name="currency" class="currency" id="from_currency"> 
+            <option value="">Select Currency</option>
+        </select>
+        <input type="text" id="input_currency" placeholder="Amount">
+      </div>
+      <div class="col">
+        <select name="currency" class="currency" id="to_currency">
+            <option value="">Select Currency</option>
+        </select>
+        <input type="text" id="output_currency" disabled placeholder="Converted Amount">
+      </div>
+    </div>
+    <button onClick="convert()">Convert</button>
+</div>
+
+<script>
+    const selectFrom = document.getElementById('from_currency');
+    const selectTo = document.getElementById('to_currency');
+    const inputCurrency = document.getElementById('input_currency');
+    const outputCurrency = document.getElementById('output_currency');
+
+    // Fetch currency data
+    fetch(`https://api.frankfurter.app/currencies`)
+        .then(response => response.json())
+        .then(data => {
+            const entries = Object.entries(data);
+            for (const [code, name] of entries) {
+                selectFrom.innerHTML += `<option value="${code}">${name}</option>`;
+                selectTo.innerHTML += `<option value="${code}">${name}</option>`;
+            }
+        })
+        .catch(error => console.error('Error fetching currencies:', error));
+
+    function convert() {
+        const inputCurrencyVal = parseFloat(inputCurrency.value);
+        const fromCurrency = selectFrom.value;
+        const toCurrency = selectTo.value;
+
+        if (isNaN(inputCurrencyVal) || inputCurrencyVal <= 0) {
+            alert("Please enter a valid amount.");
+            return;
+        }
+
+        if (fromCurrency && toCurrency && fromCurrency !== toCurrency) {
+            const host = 'api.frankfurter.app';
+            fetch(`https://${host}/latest?amount=${inputCurrencyVal}&from=${fromCurrency}&to=${toCurrency}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok: ' + response.statusText);
+                    }
+                    return response.json();
+                })
+                .then(val => {
+                    outputCurrency.value = Object.values(val.rates)[0];
+                })
+                .catch(error => {
+                    console.error('Error fetching conversion rate:', error);
+                    alert('Error fetching conversion rate: ' + error.message);
+                });
+        } else {
+            alert("Please select two different currencies.");
+        }
+    }
+</script>
+</body>
+</html>

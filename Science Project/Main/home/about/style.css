@@ -1,0 +1,45 @@
+body {
+    background-color: #2E8B57; /* Dark green background */
+    font-family: 'Poppins', sans-serif; /* Poppins font */
+    color: #ffffff; /* White text */
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    text-align: center;
+    padding: 100px 20px;
+}
+
+h1 {
+    font-size: 3.5em;
+    margin-bottom: 40px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Text shadow for h1 */
+}
+
+.members {
+    margin-bottom: 40px;
+}
+
+h2 {
+    font-size: 2.5em;
+    margin: 20px 0;
+    transition: transform 0.3s; /* Animation on hover */
+}
+
+h2:hover {
+    transform: scale(1.05); /* Slightly increase size on hover */
+    color: #FFD700; /* Gold color on hover */
+}
+
+.description {
+    font-size: 1.5em;
+    line-height: 1.6;
+    margin: 20px auto;
+    max-width: 800px; /* Max width for the description */
+}
+
+.thank-you {
+    font-size: 1.5em;
+    margin-top: 20px;
+}
